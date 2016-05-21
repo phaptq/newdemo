@@ -156,3 +156,24 @@ var App = function() {
 
 /* Initialize app when page loads */
 $(function(){ App.init(); });
+
+$(document).ready(function(){
+    $('#nganluong_form').submit(function() {
+        var nul = false;
+        $('.field-check').each(function(){
+            if($(this).val() == ''){
+                nul = true;
+                $(this).attr('placeholder', 'Vui lòng bổ sung');
+                $(this).parent().parent().addClass('has-error');
+            }
+        });
+        if($( "input:checked" ).length == 0){
+            nul = true;
+            $('.bankcode_field').parent().addClass('has-error');
+            $('.bankcode_field').text('Vui lòng chọn 1 hình thức thanh toán.')
+        }
+        if (nul) {
+            return false;
+        }
+    });
+});

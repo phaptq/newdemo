@@ -62,7 +62,7 @@ class ArticleController extends AdminController
                 'title_ascii' => $data['title_ascii'],
                 'slug'        => $data['slug'],
                 'status'      => $data['status'],
-                'category_id' => $data['category_id'],
+                'category_id' => isset($data['category_id'])? $data['category_id']: NULL,
                 'online'      => isset($data['online'])? 1: NULL,
                 'content'     => $data['content'],
                 'description' => $data['description'],

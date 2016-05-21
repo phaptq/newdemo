@@ -14,14 +14,15 @@ use Session, Auth, Validator, Cache;
 
 class PostController extends ClientController
 {
-    function detail($cat, $slug){
-        $categories = Category::all();
-        $result = Post::where('slug', $slug)->with('data', 'category')->first();
-        if(!Session::has('post_'.$result->id.'_'.\Request::ip())){
-            $result->viewed++;
-            $result->save();
-            Session::set('post_'.$result->id.'_'.\Request::ip(), date('Ymd', time()));
+    function detail($cat, $slug = false){
+        if(!Cache::has('categories_with_posts')){
+            $categories = Category::with('posts')->get();
+            Cache::put('categories_with_posts', $categories, env('CACHE_TIME'));
         }
+        $categories = Cache::get('categories_with_posts');
+        $result = Post::where('slug', $slug)->with('data', 'category')->first();
+        $result->viewed++;
+        $result->save();
         return view('client.post.detail', compact('result', 'categories'));
     }
     function update(){

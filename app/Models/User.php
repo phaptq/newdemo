@@ -15,7 +15,7 @@ class User extends Model
     use SoftDeletes;
     protected $dates = ['deleted_at'];
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'group_id', 'status', 'avatar_id', 'third_party', 'third_party_id', 'info', 'remember_token', 'created_at', 'updated_at', 'deleted_at', 'third_party_date', 'price_date'
     ];
 
     /**

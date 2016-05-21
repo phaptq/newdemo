@@ -61,6 +61,36 @@
                         </li>
                     </ul>
                 </li>
+                <li class="sidebar-parrent">
+                    <a href="#" class="sidebar-nav-menu">
+                        <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                        <i class="gi gi-user sidebar-nav-icon"></i>
+                        <span class="sidebar-nav-mini-hide">Live data</span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="{{route('live_data', 'markets-wsj-com')}}" class="sidebar-item">markets.wsj.com</a>
+                        </li>
+                        <li>
+                            <a href="{{route('live_data', 'reuters_com_finance_global-market-data')}}" class="sidebar-item">reuters.com</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-parrent">
+                    <a href="#" class="sidebar-nav-menu">
+                        <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                        <i class="gi gi-user sidebar-nav-icon"></i>
+                        <span class="sidebar-nav-mini-hide">Thanh Toán</span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="{{route('backend_ngan_luong')}}" class="sidebar-item">Ngân lượng</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{route('backend_pricing')}}" class="sidebar-item"><i class="fa fa-dollar sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Bảng giá</span></a>
+                </li>
                 <li>
                     <a href="{{route('backend_category')}}" class="sidebar-item"><i class="hi hi-folder-open sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Category</span></a>
                 </li>

@@ -60,7 +60,7 @@ class ArticleController extends ClientController
         $result = Cache::get('article_'.$cat.'_'.$slug);
         $page = isset($_GET['page'])? '_page'.$_GET['page']: '_page1';
         $perpage = env('ARTICLE_PERPAGE');
-        $comments = Comment::where(['able' => 'article', 'able_id' => $result->id])->with('user')->paginate(2);
+        $comments = Comment::where(['able' => 'article', 'able_id' => $result->id])->with('user')->paginate($perpage);
         if (!Cache::has('categories')) {
             $categories = Category::orderBy('title', 'asc')->get();
             $minutes = env('CACHE_TIME');
@@ -73,17 +73,36 @@ class ArticleController extends ClientController
 
     function post_comment($able, $id, Request $request){
         $data = $request->all();
+        $data['content'] = trim($data['content']);
         if($data['content'] == '' ){
             return Redirect::back();
         }else{
-            Comment::create([
+            $comment = Comment::create([
                     'able' => $able,
                     'able_id' => $id,
                     'content' => $data['content'],
                     'user_id' => Auth::user()->id,
                     'order' => time()
                 ]);
+            Session::flash('has_comment', $comment->id);
             return Redirect::back();
         }
+    }
+
+    function about_us(){
+        if(!Cache::has('about_us')){
+            $minutes = env('CACHE_TIME');
+            $about = Article::where('status', 'about_us')->first();
+            Cache::put('about_us', $about, $minutes);
+        }
+        $result = Cache::get('about_us');
+        if (!Cache::has('categories')) {
+            $categories = Category::orderBy('title', 'asc')->get();
+            $minutes = env('CACHE_TIME');
+            Cache::put('categories', $categories, $minutes);
+        }
+        $categories = Cache::get('categories');
+        $comments = NULL;
+        return view('client.article.detail', compact('result', 'comments', 'categories'));
     }
 }

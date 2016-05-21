@@ -21,6 +21,7 @@
                     <div class="row">
                         {!!$result->content!!}
                     </div>
+                    @if(!in_array($result->status, ['about_us']))
                     <div class="row">
                         <p class="pull-right">
                             <i class="fa fa-comments"></i> <a href="javascript:void(0)" class="label label-primary">Bình luận</a>
@@ -29,9 +30,11 @@
                             <hr/>
                         </p>
                     </div>
+                    @endif
                 </div>
                 <!-- END Blog Post -->
                 <ul class="media-list">
+                    @if(count($comments) > 0)
                     @foreach($comments as $key => $item)
                     <li class="media">
                         <a href="javascript:void(0)" class="pull-left">
@@ -50,30 +53,33 @@
                             </span>
                         </div>
                     </li>
-                    @if(\Auth::check())
-                    <li class="media">
-                        <a href="javascript:void(0)" class="pull-left">
-                            {{\Auth::user()->name}}
-                        </a>
-                        <div class="media-body">
-                            <form id="article-comment" action="{{route('post_comment', ['able'=>'article', 'id'=>$result->id])}}" method="post">
-                                {!! csrf_field() !!}
-                                <textarea id="comment_text" name="content" class="form-control" rows="4" placeholder="Nhập bình luận.."></textarea>
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-pencil"></i> Đăng</button>
-                            </form>
-                        </div>
-                    </li>
-                    @else
-                    <li class="media">
-                        <a href="javascript:void(0)" class="pull-left">
-                            Bạn chưa đăng nhập
-                        </a>
-                        <div class="media-body">
-                            <form action="" method="post" onsubmit="return false;">
-                                <textarea name="content" class="form-control" rows="4" placeholder="Vui lòng đăng nhập.." disabled></textarea>
-                            </form>
-                        </div>
-                    </li>
+                    @endif
+                    @if(!in_array($result->status, ['about_us']))
+                        @if(\Auth::check())
+                        <li class="media">
+                            <a href="javascript:void(0)" class="pull-left">
+                                {{\Auth::user()->name}}
+                            </a>
+                            <div class="media-body">
+                                <form id="article-comment" action="{{route('post_comment', ['able'=>'article', 'id'=>$result->id])}}" method="post">
+                                    {!! csrf_field() !!}
+                                    <textarea id="comment_text" name="content" class="form-control" rows="4" placeholder="Nhập bình luận.."></textarea>
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-pencil"></i> Đăng</button>
+                                </form>
+                            </div>
+                        </li>
+                        @else
+                        <li class="media">
+                            <a href="javascript:void(0)" class="pull-left">
+                                Bạn chưa đăng nhập
+                            </a>
+                            <div class="media-body">
+                                <form action="" method="post" onsubmit="return false;">
+                                    <textarea name="content" class="form-control" rows="4" placeholder="Vui lòng đăng nhập.." disabled></textarea>
+                                </form>
+                            </div>
+                        </li>
+                        @endif
                     @endif
                 </ul>
             </div>
@@ -102,7 +108,9 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $('body').on('submit', '#article-comment', function() {
-            if ($('textarea#comment_text').val()=='') {
+            var i = $('textarea#comment_text').val();
+            if (i.trim()=='') {
+                alert('Bình luận không hợp lệ!');
                 return false;
             }
         });

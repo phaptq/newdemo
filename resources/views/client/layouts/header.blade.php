@@ -25,39 +25,19 @@
                 </li>
                 <!-- END Menu Toggle -->
                 <li>
-                    <a href="javascript:void(0)" class="site-nav-sub"><i class="fa fa-angle-down site-nav-arrow"></i>Lĩnh vực</a>
-                    <ul>
-                    <?php
-                        // $minutes = 1;
-                        // if (!\Cache::has('categories')) {
-                        //     $categories = \App\Models\Category::whereNull('parent_id')->orderBy('order', 'asc')->get();
-                        //     \Cache::put('categories', $categories, $minutes);
-                        // }
-                        // $categories = \Cache::get('categories');
-                     ?>
-                    @if(count($categories) > 0)
-                        @foreach($categories as $key => $item)
-                        <li>
-                            <a href="{{route('category', $item->slug)}}">{{$item->title}}</a>
-                        </li>
-                        @endforeach
-                    @endif
-                    </ul>
-                </li>
-                <li>
                     <a href="{{route('article')}}">Tin Tức</a>
                 </li>
                 <li>
-                    <a href="contact.html">Liên hệ</a>
+                    <a href="{{route('pricing')}}">Tài Khoản</a>
                 </li>
                 <li>
                     <a href="javascript:void(0)" class="site-nav-sub"><i class="fa fa-angle-down site-nav-arrow"></i>Trợ giúp</a>
                     <ul>
                         <li>
-                            <a href="ecom_home.html">Đăng câu hỏi</a>
+                            <a href="#modal-contact" data-toggle="modal">Liên hệ</a>
                         </li>
                         <li>
-                            <a href="ecom_checkout.html">Về chúng tôi</a>
+                            <a href="{{route('about_us')}}">Về chúng tôi</a>
                         </li>
                     </ul>
                 </li>
@@ -65,6 +45,9 @@
                     <li>
                         <a href="javascript:void(0)" class="site-nav-sub"><i class="fa fa-angle-down site-nav-arrow"></i><i class="gi gi-user"></i> {{\Auth::user()->name}}</a>
                         <ul>
+                            <li>
+                                <a href="javascript:void(0)" title="Thời hạn"><small>{{(is_null(\Auth::user()->price_date) or \Auth::user()->price_date < time())? 'Hết hạn': date('H:i:s d/m/Y', \Auth::user()->price_date)}}</small></a>
+                            </li>
                             <li>
                                 <a href="{{ url('/logout') }}" title="Đăng xuất"><i class="gi gi-exit text-warning"></i> Đăng xuất</a>
                             </li>

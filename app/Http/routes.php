@@ -14,9 +14,29 @@ Route::group(['prefix' => env('ADMIN_URL'), 'namespace' => 'Admin', 'middleware'
     Route::get('/login',                             ['as' => 'backend_login','uses' => 'AuthController@getLogin']);
     Route::post('/login',                            ['as' => 'backend_post_login','uses' => 'AuthController@postLogin']);
 
+    // Live data
+    Route::get('/live/{url}',                        ['as' => 'live_data','uses' => 'HomeController@live']);
+    Route::post('/live/data',                        ['as' => 'get_live_data','uses' => 'HomeController@live_data']);
+
     Route::group(['middleware' => 'admin'], function(){
         Route::get('/logout',                            ['as' => 'admin_logout','uses' => 'AuthController@getLogout']);
         Route::get('/',                                  ['as' => 'admin','uses' => 'HomeController@index']);
+
+        // Payment
+        Route::group(['prefix' => 'payment'], function(){
+            Route::get('/ngan-luong',                    ['as' => 'backend_ngan_luong','uses' => 'PricingController@nganluong']);
+            Route::post('/ngan-luong',                   ['as' => 'update_nganluong','uses' => 'PricingController@update_nganluong']);
+        });
+
+        // Pricing:
+        Route::group(['prefix' => 'pricing'], function(){
+            Route::get('/',                             ['as' => 'backend_pricing','uses' => 'PricingController@index']);
+            Route::post('/',                            ['as' => 'store_pricing','uses' => 'PricingController@store']);
+            Route::get('/edit/{id}',                    ['as' => 'edit_pricing','uses' => 'PricingController@edit']);
+            Route::post('/edit/{id}',                   ['as' => 'update_pricing','uses' => 'PricingController@update']);
+            Route::get('/delete/{id}',                  ['as' => 'delete_pricing','uses' => 'PricingController@delete']);
+        });
+
         // User:
         Route::group(['prefix' => 'user'], function(){
             Route::get('/backend',                       ['as' => 'backend_user','uses' => 'UserController@backend']);
@@ -87,11 +107,18 @@ Route::group(['middleware' => 'web'], function(){
 });
 Route::group(['prefix' => '', 'namespace' => 'Client', 'middleware' => 'web'], function(){
     Route::get('/',                                 ['as' => 'home','uses' => 'HomeController@index']);
-    Route::get('/real-time',                        ['as' => 'get_real','uses' => 'HomeController@real_time']);
-    Route::post('/ajax/update',                     ['as' => 'ajax_update_chart','uses' => 'PostController@update']);
-    Route::get('gia-han',                           ['as' => 'pricing','uses' => 'UserController@pricing']);
+    Route::post('/real-time',                       ['as' => 'get_real','uses' => 'HomeController@live']);
+    Route::post('/load-data',                       ['as' => 'load_data','uses' => 'HomeController@load_data']);
+    Route::post('/load-live',                       ['as' => 'load_live','uses' => 'HomeController@load_live']);
     Route::get('tin-tuc',                           ['as' => 'article','uses' => 'ArticleController@index']);
-    Route::post('comment/{able}/{id}',              ['as' => 'post_comment','uses' => 'ArticleController@post_comment']);
+    Route::get('bang-gia',                          ['as' => 'pricing','uses' => 'PricingController@index']);
+    Route::get('ve-chung-toi',                      ['as' => 'about_us','uses' => 'ArticleController@about_us']);
+    Route::group(['middleware' => 'auth'], function(){
+        Route::get('thanh-toan',                        ['as' => 'check_out_pricing','uses' => 'PricingController@check_out']);
+        Route::post('thanh-toan',                       ['as' => 'check_out_nganluong','uses' => 'PricingController@nganluong_check_out']);
+        Route::get('thanh-toan-thanh-cong',             ['as' => 'nganluong_success','uses' => 'PricingController@nganluong_success']);
+        Route::post('comment/{able}/{id}',              ['as' => 'post_comment','uses' => 'ArticleController@post_comment']);
+    });
     Route::get('tin-tuc/{slug}',                    ['as' => 'article_category','uses' => 'ArticleController@category']);
     Route::get('tin-tuc/{cat}/{slug}',              ['as' => 'article_detail','uses' => 'ArticleController@detail']);
     Route::get('/{cat}/{slug}',                     ['as' => 'detail','uses' => 'PostController@detail']);

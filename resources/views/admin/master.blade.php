@@ -103,9 +103,6 @@
                 'enable-cookies'                                enables cookies for remembering active color theme when changed from the sidebar links
             -->
             <div id="page-container" class="sidebar-partial sidebar-visible-lg sidebar-no-animations">
-                <!-- Alternative Sidebar -->
-                @include('admin.layouts.sidebar-alt')
-                <!-- END Alternative Sidebar -->
 
                 <!-- Main Sidebar -->
                 @include('admin.layouts.sidebar')

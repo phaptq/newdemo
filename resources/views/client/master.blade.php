@@ -19,12 +19,15 @@
 
     <!-- The themes stylesheet of this template (for using specific theme color in individual elements - must included last) -->
     <link rel="stylesheet" href="{{asset('themes/client/css/themes.css')}}">
+
     <!-- END Stylesheets -->
 
     <!-- Modernizr (browser feature detection library) & Respond.js (enables responsive CSS code on browsers that don't support it, eg IE8) -->
     <script src="{{asset('themes/client/js/vendor/modernizr-respond.min.js')}}"></script>
     <script src="{{asset('themes/client/js/vendor/jquery-1.12.0.min.js')}}"></script>
     <script src="{{asset('themes/client/js/vendor/bootstrap.min.js')}}"></script>
+    <script src="{{asset('themes/client/js/highcharts.js')}}"></script>
+    <!-- <script src="{{asset('themes/client/js/exporting.js')}}"></script> -->
 <body>
     <!-- Page Container -->
     <!-- In the PHP version you can set the following options from inc/config file -->
@@ -43,11 +46,11 @@
         <!-- END Footer -->
     </div>
     <!-- END Page Container -->
-
     <!-- Scroll to top link, initialized in js/app.js - scrollToTop() -->
     <a href="#" id="to-top"><i class="fa fa-angle-up"></i></a>
     <!-- jQuery, Bootstrap.js, jQuery plugins and Custom JS code -->
     <script src="{{asset('themes/client/js/plugins.js')}}"></script>
     <script src="{{asset('themes/client/js/app.js')}}"></script>
+    @include('client.modal.contact')
 </body>
 </html>

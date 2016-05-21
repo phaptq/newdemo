@@ -3,61 +3,180 @@
 namespace App\Http\Controllers\Client;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 use App\Http\Requests;
 use App\Http\Controllers\ClientController;
 use App\Models\Post;
 use App\Models\Article;
 use App\Models\Post_data;
+use App\Models\Category;
+use App\Models\Live_data;
 
 use Session, Auth, Validator, Cache;
 
 class HomeController extends ClientController
 {
     function index(Request $request){
-        $limit = env('HOME_BLOCK');
-        $minutes = env('CACHE_TIME');
-        if (!Cache::has('home_recent_posts')) {
-            $new_post = Post::with('category')->orderBy('order', 'desc')->take($limit)->get();
-            Cache::put('home_recent_posts', $new_post, $minutes);
+        if(!Cache::has('categories_with_posts')){
+            $categories = Category::with('posts')->get();
+            Cache::put('categories_with_posts', $categories, env('CACHE_TIME'));
         }
-        if (!Cache::has('home_viewed_posts')) {
-            $new_post = Post::with('category')->orderBy('viewed', 'desc')->take($limit)->get();
-            Cache::put('home_viewed_posts', $new_post, $minutes);
-        }
-        if (!Cache::has('home_articles')) {
-            $new_post = Article::where('status', '')->orderBy('id', 'desc')->with('thumb')->take($limit)->get();
-            Cache::put('home_articles', $new_post, $minutes);
-        }
-        if (!Cache::has('home_static')) {
-            $today = date('Ymd', time());
-            $datas = Post_data::where('date', $today)->with('post')->get();
-            $chunk = $datas->chunk(5);
-            foreach ($chunk as $key => $split_data) {
-                foreach ($split_data as $value) {
-                    $data = json_decode($value->data, true);
-                    if (!is_null($value->post->static)) {
-                        $static[$key][$value->ticker][$value->post->static] = [$data[$value->post->static][0],$data[$value->post->static][1]];
-                    }
-                }
+        $categories = Cache::get('categories_with_posts');
+        $live = Live_data::select(['title', 'slug'])->get();
+        $keys = $live->toArray();
+        $live_key = $live->pluck('title')->toArray();
+        return view('client.home.index', compact('keys', 'categories', 'live_key'));
+    }
+    function live(){
+        if(Cache::has('live_data')){
+            $live_data = Cache::get('live_data');
+            foreach ($live_data as $key => $value) {
+                $result[str_slug($key)] = $value;
             }
-            if (isset($static)) {
-                Cache::put('home_static', $static, $minutes);
-            }
+            $status = true;
+        }else{
+            $status = false;
+            $result = null;
         }
-        $statics = Cache::get('home_static');
-        $recent_posts = Cache::get('home_recent_posts');
-        $viewed_posts = Cache::get('home_viewed_posts');
-        $articles = Cache::get('home_articles');
-        return view('client.home.index', compact('recent_posts', 'viewed_posts', 'articles', 'limit', 'statics'));
+        echo json_encode([
+                'status' => $status,
+                'result' => $result
+            ]);
     }
 
-    function real_time(){
-        include(app_path().'\libraries\simple_html_dom.php');
-        $html = file_get_html('http://markets.wsj.com/');
-        foreach($html->find('div#majorStockIndexes_moduleId') as $e){
-            echo $e->innertext . '<br>';
+    function load_data(Request $request){
+        $ajax = $request->all();
+        $data = Post_data::where('post_id', $ajax['id'])->first();
+        $date = json_decode($data->column, true);
+        if(!Cache::has('time_step_'.$data->id)){
+            $start_time = end($date);
+            $dt = \Carbon\Carbon::parse($date[0]);
+            $time_key[] = date('Ymd', strtotime($dt->subMonths(6))); $dt->addMonths(6);
+            $time_key[] = date('Ymd', strtotime($dt->subDays(10))); $dt->addDays(10);
+            $time_key[] = date('Ymd', strtotime($dt->subMonths(1))); $dt->addMonths(1);
+            $time_key[] = date('Ymd', strtotime($dt->subMonths(2))); $dt->addMonths(2);
+            $time_key[] = date('Ymd', strtotime($dt->subMonths(3))); $dt->addMonths(3);
+            $time_key[] = date('Ymd', strtotime($dt->subYears(1))); $dt->addYears(1);
+            $time_key[] = date('Ymd', strtotime($dt->subYears(2))); $dt->addYears(2);
+            $time_key[] = date('Ymd', strtotime($dt->subYears(3))); $dt->addYears(3);
+            $time_key[] = date('Ymd', strtotime($dt->subYears(5))); $dt->addYears(5);
+            $time_value = [
+                '6 tháng',
+                '10 ngày',
+                '1 tháng',
+                '2 tháng',
+                '3 tháng',
+                '1 năm',
+                '2 năm',
+                '3 năm',
+                '5 năm',
+            ];
+            $time = array_combine($time_key, $time_value);
+            $time[$start_time] = 'Từ đầu';
+            $html_time = '';
+            foreach ($time as $key_time => $value_time) {
+                if ($key_time > $start_time or $key_time == $start_time) {
+                    $html_time .= '<option value="'.$key_time.'">'.$value_time.'</option>';
+                }else{
+                    unset($time[$key_time]);
+                }
+            }
+            Cache::put('time_arr_'.$data->id, $time, env('CACHE_TIME'));
+            Cache::put('time_step_'.$data->id, $html_time, env('CACHE_TIME'));
         }
+
+        if($ajax['time'] == '0'){
+            if(array_search('6 tháng', Cache::get('time_arr_'.$data->id)) == NULL){
+                $key = 0;
+            }else{
+                $key = array_search('6 tháng', Cache::get('time_arr_'.$data->id));
+            }
+        }else{
+            $key = $ajax['time'];
+        }
+
+        $column = json_decode($data->column, true);
+        $label_data = json_decode($data->data);
+        if($key == 0){
+            $labels = $column;
+            foreach($label_data as $label => $item){
+                krsort($item);
+                $datasets[$label] = array_values($item);
+            }
+        }else{
+            foreach ($column as $k => $value) {
+                if ($value >= $key) {
+                    $res_key = $k;
+                }
+            }
+            array_splice($column, $res_key);
+            $labels = $column;
+            foreach($label_data as $label => $item){
+                $arr = array_splice($item, $res_key);
+                krsort($item);
+                $datasets[$label] = array_values($item);
+            }
+        }
+        sort($labels);
+        $select_time = Cache::get('time_step_'.$data->id);
+        $select_time = str_replace('value="'.$key.'"', 'value="'.$key.'" selected', $select_time);
+        if(count($datasets)>1){
+            foreach ($datasets as $key => $value) {
+                if(max($value) > 0){
+                    $max[$key] = max($value);
+                    $min[$key] = min($value);
+                }
+            }
+            $max_value = max(array_values($max));
+            $min_value = min(array_values($max));
+            foreach ($datasets as $key => $value) {
+                if(isset($max[$key]) and $max[$key] > ($min_value*10)){
+                    $col_data[$key] = $datasets[$key];
+                }else{
+                    $line_data[$key] = $datasets[$key];
+                }
+            }
+            echo json_encode([
+                    'bar' => $col_data,
+                    'line' => $line_data,
+                    'labels' => $labels,
+                    'title' => $data->ticker,
+                    'max' => $max_value,
+                    'time' => $select_time
+                ]);
+        }else{
+            echo json_encode([
+                'bar' => null,
+                'line' => $datasets,
+                'labels' => $labels,
+                'title' => $data->ticker,
+                'time' => $select_time
+            ]);
+        }
+    }
+
+    function load_live(Request $request){
+        $data = $request->all();
+
+        if($data['time'] == 'all'){
+            $live = Live_data::where('slug', $data['slug'])->first();
+            $all = json_decode($live->data, true);
+            $labels = array_keys($all);
+            $line = array_values($all);
+        }elseif($data['time'] = 'daily'){
+            $live = Live_data::where('slug', $data['slug'])->first();
+            $all = json_decode($live->daily, true);
+            $labels = array_keys($all);
+            $line = array_values($all);
+        }
+        echo json_encode([
+                'status' => true,
+                'labels' => $labels,
+                'line' => $line,
+                'title' => $live->title,
+                'time' => $data['time']
+            ]);
     }
 
     function upload(){
