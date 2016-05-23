@@ -17,7 +17,7 @@ class HomeController extends AdminController
 {
 
     function test_live(){
-        include(app_path().'\libraries\simple_html_dom.php');
+        include(app_path().'/libraries/simple_html_dom.php');
         $html = file_get_html('http://google.com/');
         dd($html);
     }
@@ -29,7 +29,7 @@ class HomeController extends AdminController
 
     function live($url){
         date_default_timezone_set('Asia/Ho_Chi_Minh');
-        include(app_path().'\libraries\simple_html_dom.php');
+        include(app_path().'/libraries/simple_html_dom.php');
         $html = file_get_html('http://markets.wsj.com/');
         foreach($html->find('#majorStockIndexes_moduleId table tbody tr td') as $e){
             if(strpos($e->outertext, 'class="firstCol"')){
