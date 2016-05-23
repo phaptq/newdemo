@@ -17,7 +17,7 @@ class HomeController extends AdminController
 {
 
     function test_live(){
-        include('libs/simple_html_dom.php');
+        include('libs_za/simple_html_dom.php');
         $html = file_get_html('http://google.com/');
         dd($html);
     }
@@ -50,7 +50,7 @@ class HomeController extends AdminController
         if($dt->dayOfWeek != \Carbon\Carbon::SUNDAY and $dt->dayOfWeek != \Carbon\Carbon::SATURDAY){
             if(date('H', time()) >= 5 and date('H', time()) <= 16){
                 date_default_timezone_set('Asia/Ho_Chi_Minh');
-                include(app_path().'\libraries\simple_html_dom.php');
+                include('libs_za/simple_html_dom.php');
                 $html = file_get_html('http://markets.wsj.com/');
                 foreach($html->find('#majorStockIndexes_moduleId table tbody tr td') as $e){
                     if(strpos($e->outertext, 'class="firstCol"')){
