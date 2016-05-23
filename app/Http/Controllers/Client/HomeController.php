@@ -17,7 +17,7 @@ use Session, Auth, Validator, Cache;
 
 class HomeController extends ClientController
 {
-    function index(Request $request){
+    function index(){
         if(!Cache::has('categories_with_posts')){
             $categories = Category::with('posts')->get();
             Cache::put('categories_with_posts', $categories, env('CACHE_TIME'));
@@ -29,20 +29,38 @@ class HomeController extends ClientController
         return view('client.home.index', compact('keys', 'categories', 'live_key'));
     }
     function live(){
-        if(Cache::has('live_data')){
-            $live_data = Cache::get('live_data');
-            foreach ($live_data as $key => $value) {
-                $result[str_slug($key)] = $value;
+        date_default_timezone_set('EST5EDT');
+        $dt = \Carbon\Carbon::now();
+        if($dt->dayOfWeek != \Carbon\Carbon::SUNDAY and $dt->dayOfWeek != \Carbon\Carbon::SATURDAY){
+            if(date('H', time()) >= 5 and date('H', time()) <= 16){
+                if(Cache::has('live_data')){
+                    $live_data = Cache::get('live_data');
+                    foreach ($live_data as $key => $value) {
+                        $result[str_slug($key)] = $value;
+                    }
+                    $status = true;
+                }else{
+                    $status = false;
+                    $result = null;
+                }
+                echo json_encode([
+                        'status' => $status,
+                        'result' => $result,
+                        'stop' => false
+                    ]);
             }
-            $status = true;
+            if(date('H', time()) < 4 and date('H', time()) > 16){
+                echo json_encode([
+                        'status' => false,
+                        'stop' => true
+                    ]);
+            }
         }else{
-            $status = false;
-            $result = null;
+            echo json_encode([
+                    'status' => false,
+                    'stop' => true
+                ]);
         }
-        echo json_encode([
-                'status' => $status,
-                'result' => $result
-            ]);
     }
 
     function load_data(Request $request){
@@ -158,20 +176,84 @@ class HomeController extends ClientController
 
     function load_live(Request $request){
         $data = $request->all();
-
-        if($data['time'] == 'all'){
-            $live = Live_data::where('slug', $data['slug'])->first();
-            $all = json_decode($live->data, true);
-            $labels = array_keys($all);
-            $line = array_values($all);
-        }elseif($data['time'] = 'daily'){
-            $live = Live_data::where('slug', $data['slug'])->first();
-            $all = json_decode($live->daily, true);
-            $labels = array_keys($all);
-            $line = array_values($all);
+        switch ($data['time']) {
+            case 'all':
+                $live = Live_data::where('slug', $data['slug'])->first();
+                $all = json_decode($live->data, true);
+                if(count($all) == 0){
+                    echo json_encode(['status' => false]);die;
+                }
+                $labels = array_keys($all);
+                $line = array_values($all);
+                $status = true;
+                break;
+            case 'daily':
+                $live = Live_data::where('slug', $data['slug'])->first();
+                $all = json_decode($live->daily, true);
+                if(count($all) == 0){
+                    echo json_encode(['status' => false]);die;
+                }
+                $labels = array_keys($all);
+                $line = array_values($all);
+                $status = true;
+                break;
+            case '5d':
+                $live = Live_data::where('slug', $data['slug'])->first();
+                $all = json_decode($live->weekly, true);
+                if(count($all) == 0){
+                    echo json_encode(['status' => false]);die;
+                }
+                $a = ['a'=>['a1'=> 1, 'a2' => 2], 'b'=>['b1'=> 1, 'b2' => 2]];
+                foreach ($all as $key => $value) {
+                    $keys[] = implode(',', array_keys($value));
+                    $values[] = implode(',', array_values($value));
+                }
+                $key_strings = implode(',', $keys);
+                $value_strings = implode(',', $values);
+                $labels = (explode(',', $key_strings));
+                $line = (explode(',', $value_strings));
+                $status = true;
+                break;
+            case '1m':
+                $live = Live_data::where('slug', $data['slug'])->first();
+                $all = json_decode($live->data, true);
+                if(count($all) == 0){
+                    echo json_encode(['status' => false]);die;
+                }
+                $date = date_create($live->daily_date);
+                date_sub($date, date_interval_create_from_date_string('1 month'));
+                $end_time =  date_format($date, 'Ymd');
+                foreach ($all as $key => $value) {
+                    if($key > $end_time){
+                        $labels[] = $key;
+                        $line[] = $value;
+                    }
+                }
+                $status = true;
+                break;
+            case '5m':
+                $live = Live_data::where('slug', $data['slug'])->first();
+                $all = json_decode($live->data, true);
+                if(count($all) == 0){
+                    echo json_encode(['status' => false]);die;
+                }
+                $date = date_create($live->daily_date);
+                date_sub($date, date_interval_create_from_date_string('5 months'));
+                $end_time =  date_format($date, 'Ymd');
+                foreach ($all as $key => $value) {
+                    if($key > $end_time){
+                        $labels[] = $key;
+                        $line[] = $value;
+                    }
+                }
+                $status = true;
+                break;
+            default:
+                echo json_encode(['status' => false]);die;
+                break;
         }
         echo json_encode([
-                'status' => true,
+                'status' => $status,
                 'labels' => $labels,
                 'line' => $line,
                 'title' => $live->title,

@@ -8,6 +8,8 @@ use App\Http\Controllers\AdminController;
 use App\Models\Backend_user;
 use App\Models\User;
 use App\Models\User_group;
+use App\Models\Payment_cart;
+
 use Validator, Session, Redirect;
 
 class UserController extends AdminController
@@ -90,7 +92,46 @@ class UserController extends AdminController
     }
 
     function frontend(){
-        $result = User::with('avatar')->paginate(20);
+        $result = User::paginate(20);
         return view('admin.user.frontend', compact('result'));
+    }
+
+    function frontend_edit($id){
+        $result = User::find($id);
+        if (is_null($result)) {
+            Session::flash('message', 'Not isset id '.$id.'!');
+            return Redirect::route('backend_user');
+        }
+        return view('admin.user.frontend-edit', compact('result'));
+    }
+
+    function frontend_update($id, Request $request){
+        $data = $request->all();
+        if($data['price_date'] > 0){
+            $user = User::find($id);
+            if($user->price_date>time()){
+                $date = date_create(date('YmdHis', $user->price_date));
+            }else{
+                $date = date_create(date('YmdHis', time()));
+            }
+            date_add($date, date_interval_create_from_date_string($data['price_date'].' days'));
+            $user->price_date = strtotime(date_format($date, 'YmdHis'));
+            $user->save();
+            $payment_cart = Payment_cart::create([
+                'user_id' => $id,
+                'plan_id' => NULL,
+                'plan' => $data['price_date']
+            ]);
+        }
+        Session::flash('message', 'saved!');
+        return Redirect::route('frontend_user');
+    }
+
+    function frontend_delete($id){
+        $user = User::find($id);
+        $user->delete();
+
+        Session::flash('message', 'deleted!');
+        return Redirect::route('frontend_user');
     }
 }

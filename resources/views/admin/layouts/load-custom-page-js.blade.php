@@ -25,12 +25,6 @@
 @if(isset($content))
 <?php switch ($content) {
     case 'dashboard': ?>
-        <!-- Google Maps API + Gmaps Plugin, must be loaded in the page you would like to use maps -->
-        <script src="http://maps.google.com/maps/api/js"></script>
-        <script src="{{asset('themes/admin/js/helpers/gmaps.min.js')}}"></script>
-
-        <script src="{{asset('themes/admin/js/pages/index2.js')}}"></script>
-        <script>$(function(){Index2.init();});</script>
         <?php break; ?>
     <?php case 'general_form': ?>
         <script src="{{asset('themes/admin/js/pages/formsGeneral.js')}}"></script>

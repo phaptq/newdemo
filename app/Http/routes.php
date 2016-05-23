@@ -15,6 +15,7 @@ Route::group(['prefix' => env('ADMIN_URL'), 'namespace' => 'Admin', 'middleware'
     Route::post('/login',                            ['as' => 'backend_post_login','uses' => 'AuthController@postLogin']);
 
     // Live data
+    Route::get('/live/test',                         ['as' => 'live_test','uses' => 'HomeController@test_live']);
     Route::get('/live/{url}',                        ['as' => 'live_data','uses' => 'HomeController@live']);
     Route::post('/live/data',                        ['as' => 'get_live_data','uses' => 'HomeController@live_data']);
 

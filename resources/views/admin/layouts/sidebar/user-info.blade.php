@@ -1,15 +1,11 @@
 <div class="sidebar-section sidebar-user clearfix sidebar-nav-mini-hide">
     <div class="sidebar-user-avatar">
-        <a href="page_ready_user_profile.html">
-            <img src="" alt="avatar">
+        <a href="javascript:void(0)">
+            <img src="{{asset('themes/admin/img/admin-avatar.png')}}" alt="avatar">
         </a>
     </div>
-    <div class="sidebar-user-name">John Doe</div>
+    <div class="sidebar-user-name">{{\Session::get('admin')->name}}</div>
     <div class="sidebar-user-links">
-        <a href="page_ready_user_profile.html" data-toggle="tooltip" data-placement="bottom" title="Profile"><i class="gi gi-user"></i></a>
-        <a href="page_ready_inbox.html" data-toggle="tooltip" data-placement="bottom" title="Messages"><i class="gi gi-envelope"></i></a>
-        <!-- Opens the user settings modal that can be found at the bottom of each page (page_footer.html in PHP version) -->
-        <a href="javascript:void(0)" class="enable-tooltip" data-placement="bottom" title="Settings" onclick="$('#modal-user-settings').modal('show');"><i class="gi gi-cogwheel"></i></a>
         <a href="{{route('admin_logout')}}" data-toggle="tooltip" data-placement="bottom" title="Logout"><i class="gi gi-exit"></i></a>
     </div>
 </div>

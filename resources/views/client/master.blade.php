@@ -52,5 +52,8 @@
     <script src="{{asset('themes/client/js/plugins.js')}}"></script>
     <script src="{{asset('themes/client/js/app.js')}}"></script>
     @include('client.modal.contact')
+    <!-- Modal Terms -->
+    @include('client.modal.privacy')
+    <!-- END Modal Terms -->
 </body>
 </html>

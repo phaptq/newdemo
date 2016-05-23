@@ -2446,6 +2446,14 @@ ul.cardList li {
     background-color: #86dcef;
 }
 
+.live-time.is-active{
+    background-color: #86dcef;
+}
+
+.live-time.is-active:hover{
+    background-color: #86dcef;
+}
+
 /*
 =================================================================
 (#m08rts) RETINA

@@ -51,11 +51,16 @@
                             <td><i>Mã</i></td>
                             <td><i>Chỉ số cuối</i></td>
                         </tr>
+                        <?php
+                            if(\Cache::has('live_data')){
+                                $live_data = \Cache::get('live_data');
+                            }
+                         ?>
                         @if(!is_null($keys))
                             @foreach($keys as $key)
                                 <tr class="hover-pointer live-data" key="{{$key['slug']}}">
                                     <td id="{{$key['slug']}}">{!!$key['title']!!}</td>
-                                    <td><span class="value-{{str_slug($key['title'])}}">{{\Cache::has('live_data_value_'.$key['title'])? \Cache::get('live_data_value_'.$key['title']): 'n/a'}}</span></td>
+                                    <td><span class="value-{{str_slug($key['title'])}}">{{isset($live_data)? $live_data[$key['title']]: 'n/a'}}</span></td>
                                 </tr>
                             @endforeach
                         @endif

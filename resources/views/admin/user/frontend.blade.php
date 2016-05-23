@@ -39,21 +39,15 @@
                 @if($result->count() > 0)
                 @foreach($result as $key => $item)
                 <tr>
-                    <td class="text-center">
-                        <img src="{{$item->avatar['link']}}" alt="avatar" class="img-circle">
-                    </td>
+                    <td class="text-center">{{$item->id}}</td>
                     <td><a href="{{route('frontend_user_show', $item->id)}}">{{$item->name}}</a></td>
                     <td>{{$item->email}}</td>
-                    <td><a href="javascript:void(0)" class="{{$item->group->style}}">{{$item->group->title}}</a></td>
-                    <td class="text-center">
-                        <div class="btn-group btn-group-xs">
-                            <a href="javascript:void(0)" data-toggle="tooltip" title="ON/OFF" class="btn btn-<?php echo $item->status==1? 'success': 'default'; ?>"><?php echo $item->status==1? 'ON': 'OFF'; ?></a>
-                        </div>
-                    </td>
+                    <td>{!!$item->price_date < time()? '<span class="label label-default">Free</span>': '<span class="label label-success">Premium</span>'!!}</td>
+                    <td class="text-center">{!!$item->price_date > time()? date('d-m-Y', $item->price_date): 'Hết hạn'!!}</td>
                     <td class="text-center">
                         <div class="btn-group btn-group-xs">
                             <a href="{{route('frontend_user_edit', $item->id)}}" data-toggle="tooltip" title="Edit" class="btn btn-default"><i class="fa fa-pencil"></i></a>
-                            <a href="{{route('frontend_user_delete', $item->id)}}" data-toggle="tooltip" title="Delete" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                            <a onclick="return confirm('Xóa user này?');" href="{{route('frontend_user_delete', $item->id)}}" data-toggle="tooltip" title="Delete" class="btn btn-danger"><i class="fa fa-times"></i></a>
                         </div>
                     </td>
                 </tr>

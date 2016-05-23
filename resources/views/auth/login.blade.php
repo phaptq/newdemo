@@ -5,7 +5,7 @@
 <section class="site-section site-section-light site-section-top themed-background-dark">
     <div class="container">
         <h1 class="text-center animation-slideDown"><i class="fa fa-arrow-right"></i> <strong>Đăng nhập</strong></h1>
-        <h2 class="h3 text-center animation-slideUp">Sử dụng chức năng thành viên!</h2>
+        <h2 class="h3 text-center animation-slideUp">Vui lòng đăng nhập để sử dụng chức năng cho thành viên!</h2>
     </div>
 </section>
 <!-- END Intro -->
@@ -62,6 +62,8 @@
                 </form>
                 <div class="text-center">
                     <a href="{{ url('/password/reset') }}"><small>Quên mật khẩu?</small></a>
+                    <div class="clearfix"></div>
+                    <a href="{{url('/register')}}"><small>Chưa có tài khoản?</small></a>
                 </div>
                 <!-- END Log In Form -->
             </div>

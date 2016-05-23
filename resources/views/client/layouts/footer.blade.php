@@ -14,7 +14,7 @@
                 <h4 class="footer-heading">Legal</h4>
                 <ul class="footer-nav list-inline">
                     <li><a href="javascript:void(0)">Licensing</a></li>
-                    <li><a href="javascript:void(0)">Privacy Policy</a></li>
+                    <li><a href="#modal-terms" data-toggle="modal" class="register-terms">Privacy Policy</a></li>
                 </ul>
             </div>
             <div class="col-sm-4 col-md-4">

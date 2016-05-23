@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Website system manage</title>
+        <title>Gdviet system manage</title>
 
         <meta name="description" content="ProUI is a Responsive Bootstrap Admin Template created by pixelcave and published on Themeforest.">
         <meta name="author" content="pixelcave">
@@ -116,9 +116,6 @@
 
                     <!-- Page content -->
                     <div id="page-content">
-                        <!-- Dashboard 2 Header -->
-                        @include('admin.layouts.content-header')
-                        <!-- END Dashboard 2 Header -->
 
                         <!-- Dashboard 2 Content -->
                         @section('content')

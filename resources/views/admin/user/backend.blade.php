@@ -51,7 +51,7 @@
                     <td class="text-center">
                         <div class="btn-group btn-group-xs">
                             <a href="{{route('backend_user_edit', $item->id)}}" data-toggle="tooltip" title="Edit" class="btn btn-default"><i class="fa fa-pencil"></i></a>
-                            <a href="{{route('backend_user_delete', $item->id)}}" data-toggle="tooltip" title="Delete" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                            <a href="{{route('backend_user_delete', $item->id)}}" data-toggle="tooltip" title="Delete" class="btn btn-danger" onclick="return confirm('Xóa user này?');"><i class="fa fa-times"></i></a>
                         </div>
                     </td>
                 </tr>

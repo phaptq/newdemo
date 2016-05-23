@@ -23,19 +23,14 @@
         <!-- Sidebar Content -->
         <div class="sidebar-content">
             <!-- Brand -->
-            <a href="{{route('admin')}}" class="sidebar-brand" target="_blank">
-                <i class="gi gi-flash"></i><span class="sidebar-nav-mini-hide"><strong>FRONTEND</strong></span>
+            <a href="{{route('home')}}" class="sidebar-brand" target="_blank">
+                <i class="gi gi-flash"></i><span class="sidebar-nav-mini-hide"><strong>TRANG CHỦ</strong></span>
             </a>
             <!-- END Brand -->
 
             <!-- User Info -->
             @include('admin/layouts.sidebar.user-info')
             <!-- END User Info -->
-
-            <!-- Theme Colors -->
-            <!-- Change Color Theme functionality can be found in js/app.js - templateOptions() -->
-            @include('admin/layouts.sidebar.theme-color')
-            <!-- END Theme Colors -->
 
             <!-- Sidebar Navigation -->
             <ul class="sidebar-nav">
@@ -54,33 +49,30 @@
                     </a>
                     <ul>
                         <li>
-                            <a href="{{route('backend_user')}}" class="sidebar-item">Backend</a>
+                            <a href="{{route('backend_user')}}" class="sidebar-item">Admin</a>
                         </li>
                         <li>
-                            <a href="{{route('frontend_user')}}" class="sidebar-item">Frontend</a>
+                            <a href="{{route('frontend_user')}}" class="sidebar-item">Khách hàng</a>
                         </li>
                     </ul>
                 </li>
                 <li class="sidebar-parrent">
                     <a href="#" class="sidebar-nav-menu">
                         <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
-                        <i class="gi gi-user sidebar-nav-icon"></i>
-                        <span class="sidebar-nav-mini-hide">Live data</span>
+                        <i class="gi gi-cloud sidebar-nav-icon"></i>
+                        <span class="sidebar-nav-mini-hide">Data tự động</span>
                     </a>
                     <ul>
                         <li>
                             <a href="{{route('live_data', 'markets-wsj-com')}}" class="sidebar-item">markets.wsj.com</a>
                         </li>
-                        <li>
-                            <a href="{{route('live_data', 'reuters_com_finance_global-market-data')}}" class="sidebar-item">reuters.com</a>
-                        </li>
                     </ul>
                 </li>
                 <li class="sidebar-parrent">
                     <a href="#" class="sidebar-nav-menu">
                         <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
-                        <i class="gi gi-user sidebar-nav-icon"></i>
-                        <span class="sidebar-nav-mini-hide">Thanh Toán</span>
+                        <i class="fa fa-cc-visa sidebar-nav-icon"></i>
+                        <span class="sidebar-nav-mini-hide">Tích hợp TT</span>
                     </a>
                     <ul>
                         <li>
@@ -92,13 +84,13 @@
                     <a href="{{route('backend_pricing')}}" class="sidebar-item"><i class="fa fa-dollar sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Bảng giá</span></a>
                 </li>
                 <li>
-                    <a href="{{route('backend_category')}}" class="sidebar-item"><i class="hi hi-folder-open sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Category</span></a>
+                    <a href="{{route('backend_category')}}" class="sidebar-item"><i class="hi hi-folder-open sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Danh mục</span></a>
                 </li>
                 <li>
-                    <a href="{{route('backend_post')}}" class="sidebar-item"><i class="gi gi-leaf sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Post</span></a>
+                    <a href="{{route('backend_post')}}" class="sidebar-item"><i class="fa fa-line-chart sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Biểu đồ</span></a>
                 </li>
                 <li>
-                    <a href="{{route('backend_article')}}" class="sidebar-item"><i class="fa fa-newspaper-o sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Article</span></a>
+                    <a href="{{route('backend_article')}}" class="sidebar-item"><i class="fa fa-newspaper-o sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Tin tức & thông báo</span></a>
                 </li>
                 <li class="sidebar-parrent">
                     <a href="#" class="sidebar-nav-menu">
@@ -108,15 +100,6 @@
                     </a>
                     <ul>
                         <li class="sidebar-parrent">
-                            <a href="#" class="sidebar-nav-submenu">
-                                <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
-                                <span class="sidebar-nav-mini-hide">Image</span>
-                            </a>
-                            <ul>
-                                <li>
-                                    <a href="{{route('article_image_setting')}}" class="sidebar-item">Article</a>
-                                </li>
-                            </ul>
                         </li>
                     </ul>
                 </li>
@@ -124,7 +107,6 @@
             <!-- END Sidebar Navigation -->
 
             <!-- Sidebar Notifications -->
-            @include('admin.layouts.sidebar.notification')
             <!-- END Sidebar Notifications -->
         </div>
         <!-- END Sidebar Content -->

@@ -2,7 +2,19 @@
 
 @section('content')
 <!-- Media Container -->
-    @include('client.layouts.media-container')
+<div class="media-container">
+    <!-- Intro -->
+    <section class="site-section site-section-light site-section-top">
+        <div class="container text-center">
+            <h1 class="animation-slideDown"><strong>Welcome to our Online Store!</strong></h1>
+            <h2 class="h3 animation-slideUp hidden-xs">Explore over 5.000 products!</h2>
+        </div>
+    </section>
+    <!-- END Intro -->
+
+    <!-- For best results use an image with a resolution of 2560x279 pixels -->
+    <img src="{{asset('themes/client/img/stock_1.jpg')}}" alt="" class="media-image animation-pulseSlow">
+</div>
 <!-- END Media Container -->
 <!-- Products -->
     <section class="site-content site-section">
@@ -20,12 +32,14 @@
                     <div class="row has-first">
                         <p id="img-loading-2" style="display: none;" class="text-center"><img width="80" src="{{asset('themes/client/img/loading.svg')}}" alt="loading"></p>
                         <div id="live_chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-                        <div class="btn-group btn-group-xs pull-right hide">
-                            <a class="btn btn-default" href="javascript:void(0)">1D</a>
-                            <a class="btn btn-default" href="javascript:void(0)">5D</a>
-                            <a class="btn btn-default" href="javascript:void(0)">1M</a>
-                            <a class="btn btn-default" href="javascript:void(0)">5M</a>
-                            <a class="btn btn-default" href="javascript:void(0)">All</a>
+                        <div class="text-center">
+                            <div class="btn-group btn-group-xs pull-right hide pull-right">
+                                <a class="btn btn-default live-time" key="daily" href="javascript:void(0)">1D</a>
+                                <a class="btn btn-default live-time" key="5d" href="javascript:void(0)">5D</a>
+                                <a class="btn btn-default live-time" key="1m" href="javascript:void(0)">1M</a>
+                                <a class="btn btn-default live-time" key="5m" href="javascript:void(0)">5M</a>
+                                <a class="btn btn-default live-time" key="all" href="javascript:void(0)">All</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -46,7 +60,6 @@ $(document).ready(function(){
             data: {_token: '{{csrf_token()}}', id: id, time: time},
         })
         .done(function(res) {
-            console.log(res);
             var series = new Array();
             $.each(res.line, function(key, value){
                 var data = new Array();
@@ -180,18 +193,19 @@ $(document).ready(function(){
             data: {_token: '{{csrf_token()}}'},
         })
         .done(function(res) {
-            console.log(res);
             if(res.status){
                 $.each(res.result, function(index, value){
                     var i = $('.value-'+index).text();
                     $('.value-'+index).html(value);
                 });
             }
+            if(res.stop){
+                clearInterval(live);
+            }
         });
         }, 4000);
 
     var load_live = function(slug, time){
-        console.log(time);
         $('#live_chart').html('');
         $('#img-loading-2').show();
         $.ajax({
@@ -202,81 +216,98 @@ $(document).ready(function(){
         })
         .done(function(res) {
             console.log(res);
-            var color = ['#FF9999', '#99FF99', '#90ed7d', '#f7a35c', '#8085e9',
-                    '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'
-            ];
-            var line = new Array();
-            $.each(res.line, function(index, str){
-                line.push( parseFloat(str));
-            });
-            $('#live_chart').highcharts({
-                chart: {
-                    zoomType: 'xy',
-                    events: {
-                        load: function(event) {
-                            $('#img-loading-2').hide();
-                            $('.btn-group').removeClass('hide');
-                        }
-                    },
-                    backgroundColor: '#f9f9f2',
-                },
-                colors: color,
-                title: {
-                    text: res.title
-                },
-                subtitle: {
-                    text: 'test data'
-                },
-                xAxis: [{
-                    categories: res.labels,
-                    crosshair: false
-                }],
-                yAxis: [{ // Primary yAxis
-                    lineWidth: 1,
-                    lineColor: "#C0D0E0",
-                    labels: {
-                        format: '{value}',
-                        style: {
-                            color: Highcharts.getOptions().colors[0]
-                        }
-                    },
-                    title: {
-                        text: '',
-                        style: {
-                            color: Highcharts.getOptions().colors[0]
-                        }
-                    },
-                }],
-                tooltip: {
-                    shared: false,
-                },
-                plotOptions: {
-                    spline: {
-                        lineWidth: 1,
-                        states: {
-                            hover: {
-                                lineWidth: 3
+            if(res.status){
+                var color = ['#FF9999', '#99FF99', '#90ed7d', '#f7a35c', '#8085e9',
+                        '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'
+                ];
+                var line = new Array();
+                $.each(res.line, function(index, str){
+                    line.push( parseFloat(str));
+                });
+                $('#live_chart').highcharts({
+                    chart: {
+                        zoomType: 'xy',
+                        events: {
+                            load: function(event) {
+                                $('#img-loading-2').hide();
+                                $('.btn-group').removeClass('hide');
+                                $('.live-time').removeClass('is-active');
+                                $('.live-time').each(function(){
+                                    if($(this).attr('key') == time){
+                                        $(this).addClass('is-active');
+                                    }
+                                });
                             }
                         },
-                        marker: {
-                            enabled: false
+                        backgroundColor: '#f9f9f2',
+                    },
+                    colors: color,
+                    title: {
+                        text: res.title
+                    },
+                    subtitle: {
+                        text: 'test data'
+                    },
+                    xAxis: [{
+                        categories: res.labels,
+                        crosshair: false
+                    }],
+                    yAxis: [{ // Primary yAxis
+                        lineWidth: 1,
+                        lineColor: "#C0D0E0",
+                        labels: {
+                            format: '{value}',
+                            style: {
+                                color: Highcharts.getOptions().colors[0]
+                            }
+                        },
+                        title: {
+                            text: '',
+                            style: {
+                                color: Highcharts.getOptions().colors[0]
+                            }
+                        },
+                    }],
+                    tooltip: {
+                        shared: false,
+                    },
+                    plotOptions: {
+                        spline: {
+                            lineWidth: 1,
+                            states: {
+                                hover: {
+                                    lineWidth: 3
+                                }
+                            },
+                            marker: {
+                                enabled: false
+                            }
                         }
+                    },
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'top',
+                        floating: true,
+                        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+                    },
+                    series: [{
+                        name: res.title,
+                        type: 'spline',
+                        yAxis: 0,
+                        data: line
+                    }]
+                });
+            }else{
+                $('.live-time').removeClass('is-active');
+                $('.live-time').each(function(){
+                    if($(this).attr('key') == time){
+                        $(this).addClass('is-active');
                     }
-                },
-                legend: {
-                    layout: 'horizontal',
-                    align: 'center',
-                    verticalAlign: 'top',
-                    floating: true,
-                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
-                },
-                series: [{
-                    name: res.title,
-                    type: 'spline',
-                    yAxis: 0,
-                    data: line
-                }]
-            });
+                });
+                $('#img-loading-2').hide();
+                $('#live_chart').html('<p class="alert alert-warning text-center">Tạm thời chưa có dữ liệu. Vui lòng quay lại sau!</>');
+            }
         });
     };
     $('body').on('click', '.live-data', function(){
@@ -288,8 +319,16 @@ $(document).ready(function(){
             $(this).addClass('visible');
             load_live(i.attr('key'), 'daily');
         }
-
     });
+    $('body').on('click', '.live-time', function(){
+        var i = $(this);
+        if($(this).hasClass('is-active')){
+            return false;
+        }else{
+            load_live($('.live-data.visible').attr('key'), i.attr('key'));
+        }
+    });
+    $('.live-data').first().trigger('click');
 })
 </script>
 @stop

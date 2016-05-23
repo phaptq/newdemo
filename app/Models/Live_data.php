@@ -8,6 +8,6 @@ use Cviebrock\EloquentSluggable\SluggableTrait;
 class Live_data extends Model {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
-    protected $fillable = array('title', 'slug', 'daily', 'hourly', 'daily_date', 'hourly_time', 'data', 'order', 'created_at', 'updated_at', 'deleted_at');
+    protected $fillable = array('title', 'slug', 'daily', 'hourly', 'daily_date', 'weekly', 'data', 'order', 'created_at', 'updated_at', 'deleted_at');
 
 }
