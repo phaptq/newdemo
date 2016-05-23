@@ -17,7 +17,7 @@ class HomeController extends AdminController
 {
 
     function test_live(){
-        include(app_path().'/libraries/simple_html_dom.php');
+        include('libs/simple_html_dom.php');
         $html = file_get_html('http://google.com/');
         dd($html);
     }
