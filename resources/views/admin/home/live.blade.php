@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="row table-body">
+
 </div>
 
 <script type="text/javascript">

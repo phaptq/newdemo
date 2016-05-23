@@ -630,13 +630,13 @@ class PricingController extends ClientController
 
             $nlcheckout= new NL_CheckOutV3(MERCHANT_ID,MERCHANT_PASS,RECEIVER,URL_API);
             $total_amount=$_POST['total_amount'];
-             $array_items[0]= array(
-                    'id' => 4,
-                    'name' => 'Ngân lượng',
-                    'plan' => $plan,
-                    'price' => $total_amount,
-                    'url' => 'http://nganluong.vn/'
-                    );
+             // $array_items[0]= array(
+             //        'id' => 4,
+             //        'name' => 'Ngân lượng',
+             //        'plan' => $plan,
+             //        'price' => $total_amount,
+             //        'url' => 'http://nganluong.vn/'
+             //        );
 
             $array_items=array();
              $payment_method =$_POST['option_payment'];
